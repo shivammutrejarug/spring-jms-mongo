@@ -23,8 +23,8 @@ public class SpringJmsApplication {
     repository.deleteAll();
 
     // save a couple of customers
-    repository.save(new Customer("Alice", "Babu"));
-    repository.save(new Customer("Bob", "Nath"));
+    repository.save(new Customer("Alice", "Babu", Customer.GetAdminRole()));
+    repository.save(new Customer("Bob", "Nath", Customer.GetUserRole()));
   }
 
   @RequestMapping(value = "/available")
