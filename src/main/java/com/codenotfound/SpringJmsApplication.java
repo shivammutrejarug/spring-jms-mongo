@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,36 +34,66 @@ public class SpringJmsApplication {
   }
 
   @RequestMapping(value = "/fetch/{id}")
-  public void fetch(@PathVariable String id) {
-    Optional<Customer> customer = repository.findById(id);
-    customer.ifPresent(System.out::println);
+  public ResponseEntity<String> fetch(@PathVariable String id) {
+    try {
+      Optional<Customer> customer = repository.findById(id);
+      if (customer.isPresent()) {
+        System.out.println(customer.get());
+        return new ResponseEntity<>(customer.toString(), HttpStatus.OK);
+      }
+      return new ResponseEntity<>("Invalid Customer ID",HttpStatus.BAD_REQUEST);
+    } catch (Exception e) {
+      System.out.println("Exception: " + e);
+      return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @RequestMapping(value = "/login/{id}")
-  public void login(@PathVariable String id) {
-    Optional<Customer> customer = repository.findById(id);
-    if (customer.isPresent()) {
-      customer.get().Login();
-      repository.save(customer.get());
+  public ResponseEntity<String> login(@PathVariable String id) {
+    try {
+      Optional<Customer> customer = repository.findById(id);
+      if (customer.isPresent()) {
+        customer.get().Login();
+        repository.save(customer.get());
+        return new ResponseEntity<>("Logged in Successfully. Access_token: " + customer.get().accessToken, HttpStatus.OK);
+      }
+      return new ResponseEntity<>("Invalid Customer ID", HttpStatus.BAD_REQUEST);
+    } catch (Exception e) {
+      System.out.println("Exception: " + e);
+      return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @RequestMapping(value = "/logout/{id}")
-  public void logout(@PathVariable String id) {
-    Optional<Customer> customer = repository.findById(id);
-    if (customer.isPresent()) {
-      customer.get().Logout();
-      repository.save(customer.get());
+  public ResponseEntity<String> logout(@PathVariable String id) {
+    try {
+      Optional<Customer> customer = repository.findById(id);
+      if (customer.isPresent()) {
+        customer.get().Logout();
+        repository.save(customer.get());
+        return new ResponseEntity<>("Logged out successfully", HttpStatus.OK);
+      }
+      return new ResponseEntity<>("Invalid Customer ID", HttpStatus.BAD_REQUEST);
+    } catch (Exception e) {
+      System.out.println("Exception: " + e);
+      return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @RequestMapping(value = "/authenticate/{id}/{accessToken}")
-  public void logout(@PathVariable String id, @PathVariable String accessToken) {
-    Optional<Customer> customer = repository.findById(id);
-    if (customer.isPresent()) {
-      Boolean result = customer.get().IsAuthenticated(accessToken);
-      System.out.printf("Authenticated : %b", result);
-      System.out.println();
+  public ResponseEntity<String> logout(@PathVariable String id, @PathVariable String accessToken) {
+    try {
+      Optional<Customer> customer = repository.findById(id);
+      if (customer.isPresent()) {
+        Boolean result = customer.get().IsAuthenticated(accessToken);
+        System.out.printf("Authenticated : %b", result);
+        System.out.println();
+        return new ResponseEntity<>("Valid Customer", HttpStatus.OK);
+      }
+      return new ResponseEntity<>("Invalid Customer ID", HttpStatus.BAD_REQUEST);
+    } catch (Exception e) {
+      System.out.println("Exception: " + e);
+      return new ResponseEntity<>("Internal Server Error",HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
