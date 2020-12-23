@@ -34,44 +34,34 @@ public class SpringJmsApplication {
   @RequestMapping(value = "/fetch/{id}")
   public void fetch(@PathVariable String id) {
     Optional<Customer> customer = repository.findById(id);
-    try {
-      System.out.println(customer.get());
-    } catch (NoSuchElementException e) {
-      System.out.println("Exception : "+ e);
-    }
+    customer.ifPresent(System.out::println);
   }
 
   @RequestMapping(value = "/login/{id}")
   public void login(@PathVariable String id) {
     Optional<Customer> customer = repository.findById(id);
-    try {
+    if (customer.isPresent()) {
       customer.get().Login();
       repository.save(customer.get());
-    } catch (NoSuchElementException e) {
-      System.out.println("Exception : "+ e);
     }
   }
 
   @RequestMapping(value = "/logout/{id}")
   public void logout(@PathVariable String id) {
     Optional<Customer> customer = repository.findById(id);
-    try {
+    if (customer.isPresent()) {
       customer.get().Logout();
       repository.save(customer.get());
-    } catch (NoSuchElementException e) {
-      System.out.println("Exception : "+ e);
     }
   }
 
   @RequestMapping(value = "/authenticate/{id}/{accessToken}")
   public void logout(@PathVariable String id, @PathVariable String accessToken) {
     Optional<Customer> customer = repository.findById(id);
-    try {
+    if (customer.isPresent()) {
       Boolean result = customer.get().IsAuthenticated(accessToken);
       System.out.printf("Authenticated : %b", result);
       System.out.println();
-    } catch (NoSuchElementException e) {
-      System.out.println("Exception : "+ e);
     }
   }
 
