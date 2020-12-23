@@ -2,7 +2,7 @@ package com.codenotfound;
 
 import org.springframework.data.annotation.Id;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -15,8 +15,8 @@ public class Customer {
   public Role role;
   public Boolean isLoggedIn;
   public String accessToken;
-  public Timestamp createdAt;
-  public Timestamp updatedAt;
+  public Date createdAt;
+  public Date updatedAt;
 
   enum Role {
     ADMIN,
@@ -31,8 +31,8 @@ public class Customer {
     this.firstName = firstName;
     this.lastName = lastName;
     this.role = role;
-    this.createdAt = new Timestamp(System.currentTimeMillis());
-    this.updatedAt = new Timestamp(System.currentTimeMillis());
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
     this.isLoggedIn = false;
     this.accessToken = "";
   }
@@ -40,16 +40,17 @@ public class Customer {
   public void Login() {
     this.isLoggedIn = true;
     this.accessToken = UUID.randomUUID().toString();
-    this.updatedAt = new Timestamp(System.currentTimeMillis());
+    this.updatedAt = new Date();
   }
 
   public void Logout() {
     this.isLoggedIn = false;
-    this.updatedAt = new Timestamp(System.currentTimeMillis());
+    this.accessToken = "";
+    this.updatedAt = new Date();
   }
 
-  public boolean validated(String accessToken) {
-    if (this.isLoggedIn && this.accessToken == accessToken) {
+  public boolean IsAuthenticated(String accessToken) {
+    if (this.isLoggedIn && this.accessToken.equals(accessToken)) {
       return true;
     }
     return false;
@@ -70,8 +71,8 @@ public class Customer {
   @Override
   public String toString() {
     return String.format(
-        "Customer[id=%s, firstName='%s', lastName='%s', isLoggedIn='%b']",
-        id, firstName, lastName, isLoggedIn);
+        "Customer[id=%s, firstName='%s', lastName='%s', role='%s', isLoggedIn='%b']",
+        id, firstName, lastName, role, isLoggedIn);
   }
 
 }
