@@ -86,7 +86,12 @@ public class SpringJmsApplication {
         Boolean result = customer.get().IsAuthenticated(accessToken);
         System.out.printf("Authenticated : %b", result);
         System.out.println();
-        return new ResponseEntity<>("Valid Customer", HttpStatus.OK);
+
+        if (result) {
+          return new ResponseEntity<>("Valid Customer", HttpStatus.OK);
+        } else {
+          return new ResponseEntity<>("Unauthorised Customer", HttpStatus.UNAUTHORIZED);
+        }
       }
       return new ResponseEntity<>("Invalid Customer ID", HttpStatus.BAD_REQUEST);
     } catch (Exception e) {

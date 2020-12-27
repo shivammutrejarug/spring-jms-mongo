@@ -148,9 +148,16 @@ public class JmsServer {
         System.out.printf("Customer ID : %s : Authenticated : %b", customerId, result);
         System.out.println();
 
-        response.data = "Valid Customer";
-        response.message = "Authentication Successful";
-        response.statusCode = 200;
+        if (result) {
+          response.data = "Valid Customer";
+          response.message = "Authentication Successful";
+          response.statusCode = 200;
+        } else {
+          response.data = "Unauthorised Customer";
+          response.message = "Authentication Failed";
+          response.statusCode = 401;
+        }
+
       } else {
         System.out.println("Invalid Customer ID : " + customerId);
 
