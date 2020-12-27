@@ -115,6 +115,11 @@ public class SpringJmsApplication {
     sender.send("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"logout\",\"customerId\": \"a8484a52-3436-4d00-956f-ca84b0e22236\"}}", "server.q");
   }
 
+  @RequestMapping(value = "/jms/authenticate")
+  public void jmsAuthenticate() {
+    sender.send("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"logout\",\"customerId\": \"a8484a52-3436-4d00-956f-ca84b0e22236\",\"accessToken\": \"a8484a52-3436-4d00-956f-ca84b0e22236\"}}", "server.q");
+  }
+
   public static void main(String[] args) {
     System.setProperty("javax.xml.bind.context.factory","org.eclipse.persistence.jaxb.JAXBContextFactory");
     SpringApplication.run(SpringJmsApplication.class, args);

@@ -135,6 +135,41 @@ public class JmsServer {
     }
   }
 
+  private String handleAuthenticate(String customerId, String accessToken, String requestId){
+    ServerResponse response = new ServerResponse();
+    response.requestId = requestId;
+    response.action = "login-response";
+
+    try {
+      Optional<Customer> customer = repository.findById(customerId);
+      if (customer.isPresent()) {
+        Boolean result = customer.get().IsAuthenticated(accessToken);
+        System.out.printf("Authenticated : %b", result);
+        System.out.println();
+
+        response.data = "Valid Customer";
+        response.message = "Authentication Successful";
+        response.statusCode = 200;
+      } else {
+        System.out.println("Invalid Customer ID : " + customerId);
+
+        response.data = "Authentication Failed: Invalid Customer ID";
+        response.message = "Bad Request";
+        response.statusCode = 400;
+      }
+      return response.marshal();
+
+    } catch (Exception e) {
+      System.out.println("[JMSServer.HandleFetch] Error while authenticating customer for id " + customerId + " : " + e.toString());
+
+      response.data = "Authentication Failed";
+      response.message = "Internal Server Error";
+      response.statusCode = 500;
+
+      return response.marshal();
+    }
+  }
+
   @JmsListener(destination = "server.q")
   public void receive(String message) {
     LOGGER.info("received message on server = '{}'", message);
@@ -150,6 +185,9 @@ public class JmsServer {
         break;
       case "logout":
         handleLogout(msg.customerId, msg.requestId);
+        break;
+      case "authentication":
+        handleAuthenticate(msg.customerId, msg.accesstoken, msg.requestId);
         break;
     }
   }
