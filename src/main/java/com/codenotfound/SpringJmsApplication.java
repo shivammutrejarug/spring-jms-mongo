@@ -79,7 +79,7 @@ public class SpringJmsApplication {
   }
 
   @RequestMapping(value = "/authenticate/{id}/{accessToken}")
-  public ResponseEntity<String> logout(@PathVariable String id, @PathVariable String accessToken) {
+  public ResponseEntity<String> authenticate(@PathVariable String id, @PathVariable String accessToken) {
     try {
       Optional<Customer> customer = repository.findById(id);
       if (customer.isPresent()) {
@@ -100,24 +100,28 @@ public class SpringJmsApplication {
     sender.send("Hello from controller!", "helloworld.q");
   }
 
-  @RequestMapping(value = "/jms/fetch")
-  public void jmsFetch() {
-    sender.send("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"fetch\",\"customerId\": \"a8484a52-3436-4d00-956f-ca84b0e22236\"}}", "server.q");
+  @RequestMapping(value = "/jms/fetch/{id}")
+  public void jmsFetch(@PathVariable String id) {
+    String msg = String.format("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"fetch\",\"customerId\": \"%s\"}}", id);
+    sender.send(msg, "server.q");
   }
 
-  @RequestMapping(value = "/jms/login")
-  public void jmsLogin() {
-    sender.send("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"login\",\"customerId\": \"a8484a52-3436-4d00-956f-ca84b0e22236\"}}", "server.q");
+  @RequestMapping(value = "/jms/login/{id}")
+  public void jmsLogin(@PathVariable String id) {
+    String msg = String.format("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"login\",\"customerId\": \"%s\"}}", id);
+    sender.send(msg, "server.q");
   }
 
-  @RequestMapping(value = "/jms/logout")
-  public void jmsLogout() {
-    sender.send("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"logout\",\"customerId\": \"a8484a52-3436-4d00-956f-ca84b0e22236\"}}", "server.q");
+  @RequestMapping(value = "/jms/logout/{id}")
+  public void jmsLogout(@PathVariable String id) {
+    String msg = String.format("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"logout\",\"customerId\": \"%s\"}}", id);
+    sender.send(msg, "server.q");
   }
 
-  @RequestMapping(value = "/jms/authenticate")
-  public void jmsAuthenticate() {
-    sender.send("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"logout\",\"customerId\": \"a8484a52-3436-4d00-956f-ca84b0e22236\",\"accessToken\": \"a8484a52-3436-4d00-956f-ca84b0e22236\"}}", "server.q");
+  @RequestMapping(value = "/jms/authenticate/{id}/{accessToken}")
+  public void jmsAuthenticate(@PathVariable String id, @PathVariable String accessToken) {
+    String msg = String.format("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"authenticate\",\"customerId\": \"%s\",\"accessToken\": \"%s\"}}", id, accessToken);
+    sender.send(msg, "server.q");
   }
 
   public static void main(String[] args) {
