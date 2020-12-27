@@ -129,6 +129,12 @@ public class SpringJmsApplication {
     sender.send(msg, "server.q");
   }
 
+  @RequestMapping(value = "/jms/incorrect")
+  public void jmsIncorrect() {
+    String msg = "{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"random\"}}";
+    sender.send(msg, "server.q");
+  }
+
   public static void main(String[] args) {
     System.setProperty("javax.xml.bind.context.factory","org.eclipse.persistence.jaxb.JAXBContextFactory");
     SpringApplication.run(SpringJmsApplication.class, args);

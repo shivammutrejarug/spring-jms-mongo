@@ -198,6 +198,13 @@ public class JmsServer {
       case "authenticate":
         response = handleAuthenticate(msg.customerId, msg.accessToken, msg.requestId);
         break;
+      default:
+        response = new ServerResponse();
+        response.requestId = msg.requestId;
+        response.action = msg.action;
+        response.data = "Invalid Action";
+        response.message = "Action not defined";
+        response.statusCode = 404;
     }
 
     sender.send(response.marshal(), "client.q");
