@@ -30,7 +30,7 @@ public class JmsServer {
     return latch;
   }
 
-  private String handleFetch(String customerId, String requestId){
+  private ServerResponse handleFetch(String customerId, String requestId){
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "fetch-response";
@@ -50,7 +50,7 @@ public class JmsServer {
         response.message = "Bad Request";
         response.statusCode = 400;
       }
-      return response.marshal();
+      return response;
 
     } catch (Exception e) {
       System.out.println("[JMSServer.HandleFetch] Error while fetching customer for id " + customerId + " : " + e.toString());
@@ -59,11 +59,11 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
-      return response.marshal();
+      return response;
     }
   }
 
-  private String handleLogin(String customerId, String requestId){
+  private ServerResponse handleLogin(String customerId, String requestId){
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "login-response";
@@ -86,7 +86,7 @@ public class JmsServer {
         response.message = "Bad Request";
         response.statusCode = 400;
       }
-      return response.marshal();
+      return response;
 
     } catch (Exception e) {
       System.out.println("[JMSServer.HandleFetch] Error while logging in customer for id " + customerId + " : " + e.toString());
@@ -95,11 +95,11 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
-      return response.marshal();
+      return response;
     }
   }
 
-  private String handleLogout(String customerId, String requestId){
+  private ServerResponse handleLogout(String customerId, String requestId){
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "login-response";
@@ -122,7 +122,7 @@ public class JmsServer {
         response.message = "Bad Request";
         response.statusCode = 400;
       }
-      return response.marshal();
+      return response;
 
     } catch (Exception e) {
       System.out.println("[JMSServer.HandleFetch] Error while logging out customer for id " + customerId + " : " + e.toString());
@@ -131,11 +131,11 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
-      return response.marshal();
+      return response;
     }
   }
 
-  private String handleAuthenticate(String customerId, String accessToken, String requestId){
+  private ServerResponse handleAuthenticate(String customerId, String accessToken, String requestId){
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "authenticate-response";
@@ -165,7 +165,7 @@ public class JmsServer {
         response.message = "Bad Request";
         response.statusCode = 400;
       }
-      return response.marshal();
+      return response;
 
     } catch (Exception e) {
       System.out.println("[JMSServer.HandleFetch] Error while authenticating customer for id " + customerId + " : " + e.toString());
@@ -174,7 +174,7 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
-      return response.marshal();
+      return response;
     }
   }
 
@@ -183,20 +183,23 @@ public class JmsServer {
     LOGGER.info("received message on server = '{}'", message);
     latch.countDown();
 
+    ServerResponse response = null;
     ServerMessage msg = unmarshal(message);
     switch (msg.action) {
       case "fetch":
-        handleFetch(msg.customerId, msg.requestId);
+        response = handleFetch(msg.customerId, msg.requestId);
         break;
       case "login":
-        handleLogin(msg.customerId, msg.requestId);
+        response = handleLogin(msg.customerId, msg.requestId);
         break;
       case "logout":
-        handleLogout(msg.customerId, msg.requestId);
+        response = handleLogout(msg.customerId, msg.requestId);
         break;
       case "authenticate":
-        handleAuthenticate(msg.customerId, msg.accessToken, msg.requestId);
+        response = handleAuthenticate(msg.customerId, msg.accessToken, msg.requestId);
         break;
     }
+
+    sender.send(response.marshal(), "client.q");
   }
 }
