@@ -138,13 +138,14 @@ public class JmsServer {
   private String handleAuthenticate(String customerId, String accessToken, String requestId){
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
-    response.action = "login-response";
+    response.action = "authenticate-response";
 
     try {
       Optional<Customer> customer = repository.findById(customerId);
+
       if (customer.isPresent()) {
         Boolean result = customer.get().IsAuthenticated(accessToken);
-        System.out.printf("Authenticated : %b", result);
+        System.out.printf("Customer ID : %s : Authenticated : %b", customerId, result);
         System.out.println();
 
         response.data = "Valid Customer";
@@ -186,8 +187,8 @@ public class JmsServer {
       case "logout":
         handleLogout(msg.customerId, msg.requestId);
         break;
-      case "authentication":
-        handleAuthenticate(msg.customerId, msg.accesstoken, msg.requestId);
+      case "authenticate":
+        handleAuthenticate(msg.customerId, msg.accessToken, msg.requestId);
         break;
     }
   }

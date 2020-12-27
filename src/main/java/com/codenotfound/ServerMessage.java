@@ -13,7 +13,7 @@ public class ServerMessage {
     public String requestId;
     public String action;
     public String customerId;
-    public String accesstoken;
+    public String accessToken;
 
     public static ServerMessage unmarshal(String jsonMessage)  {
         JAXBContext jc = null;
