@@ -30,13 +30,13 @@ public class JmsServer {
     return latch;
   }
 
-  private String handleFetch(FetchData data, String requestId){
+  private String handleFetch(String customerId, String requestId){
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "fetch-response";
 
     try {
-      Optional<Customer> customer = repository.findById(data.Id);
+      Optional<Customer> customer = repository.findById(customerId);
       if (customer.isPresent()) {
         System.out.println("Fetched customer : " + customer.get());
 
@@ -44,6 +44,8 @@ public class JmsServer {
         response.message = "Fetch Successful";
         response.statusCode = 200;
       } else {
+        System.out.println("Invalid Customer ID : " + customerId);
+
         response.data = "Fetch Failed: Invalid Customer ID";
         response.message = "Bad Request";
         response.statusCode = 400;
@@ -51,7 +53,7 @@ public class JmsServer {
       return response.marshal();
 
     } catch (Exception e) {
-      System.out.println("[JMSServer.HandleFetch] Error while fetching customer for id " + data.Id + " : " + e.toString());
+      System.out.println("[JMSServer.HandleFetch] Error while fetching customer for id " + customerId + " : " + e.toString());
 
       response.data = "Fetch Failed";
       response.message = "Internal Server Error";
@@ -69,8 +71,7 @@ public class JmsServer {
     ServerMessage msg = unmarshal(message);
     switch (msg.action) {
       case "fetch":
-        FetchData fetchData = FetchData.unmarshal(msg.data);
-        handleFetch(fetchData, msg.requestId);
+        handleFetch(msg.customerId, msg.requestId);
     }
   }
 }

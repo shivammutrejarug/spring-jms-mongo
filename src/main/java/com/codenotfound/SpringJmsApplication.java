@@ -102,7 +102,7 @@ public class SpringJmsApplication {
 
   @RequestMapping(value = "/jms/fetch")
   public void jmsFetch() {
-    sender.send("{\"serverMessage\": {\"requestId\": \"1\",\"action\": \"fetch\",\"data\": {\"id\": \"a8484a52-3436-4d00-956f-ca84b0e22236\"}}}", "server.q");
+    sender.send("{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"fetch\",\"customerId\": \"a8484a52-3436-4d00-956f-ca84b0e22236\"}}", "server.q");
   }
 
   public static void main(String[] args) {

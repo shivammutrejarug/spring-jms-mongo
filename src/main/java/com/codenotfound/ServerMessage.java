@@ -8,12 +8,12 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.StringReader;
 
-
-@XmlRootElement
+@XmlRootElement(name = "requestMessage")
 public class ServerMessage {
     public String requestId;
     public String action;
-    public String data;
+    public String customerId;
+    public String accesstoken;
 
     public static ServerMessage unmarshal(String jsonMessage)  {
         JAXBContext jc = null;
@@ -23,7 +23,7 @@ public class ServerMessage {
             Unmarshaller unmarshaller = jc.createUnmarshaller();
 
             unmarshaller.setProperty(UnmarshallerProperties.MEDIA_TYPE, "application/json");
-            unmarshaller.setProperty(UnmarshallerProperties.JSON_INCLUDE_ROOT, false);
+            unmarshaller.setProperty(UnmarshallerProperties.JSON_INCLUDE_ROOT, true);
 
             serverMessage = (ServerMessage) unmarshaller.unmarshal(new StringReader(jsonMessage));
         } catch (JAXBException e) {
