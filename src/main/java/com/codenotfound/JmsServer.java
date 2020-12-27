@@ -99,6 +99,42 @@ public class JmsServer {
     }
   }
 
+  private String handleLogout(String customerId, String requestId){
+    ServerResponse response = new ServerResponse();
+    response.requestId = requestId;
+    response.action = "login-response";
+
+    try {
+      Optional<Customer> customer = repository.findById(customerId);
+      if (customer.isPresent()) {
+        customer.get().Logout();
+        repository.save(customer.get());
+
+        System.out.println("Logged out customer : " + customer.get());
+
+        response.data = "Logout Successful";
+        response.message = "Logout Successful";
+        response.statusCode = 200;
+      } else {
+        System.out.println("Invalid Customer ID : " + customerId);
+
+        response.data = "Logout Failed: Invalid Customer ID";
+        response.message = "Bad Request";
+        response.statusCode = 400;
+      }
+      return response.marshal();
+
+    } catch (Exception e) {
+      System.out.println("[JMSServer.HandleFetch] Error while logging out customer for id " + customerId + " : " + e.toString());
+
+      response.data = "Logout Failed";
+      response.message = "Internal Server Error";
+      response.statusCode = 500;
+
+      return response.marshal();
+    }
+  }
+
   @JmsListener(destination = "server.q")
   public void receive(String message) {
     LOGGER.info("received message on server = '{}'", message);
@@ -111,6 +147,9 @@ public class JmsServer {
         break;
       case "login":
         handleLogin(msg.customerId, msg.requestId);
+        break;
+      case "logout":
+        handleLogout(msg.customerId, msg.requestId);
         break;
     }
   }
