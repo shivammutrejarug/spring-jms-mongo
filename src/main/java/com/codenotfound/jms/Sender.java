@@ -13,8 +13,8 @@ public class Sender {
   @Autowired
   private JmsTemplate jmsTemplate;
 
-  public void send(String message) {
+  public void send(String message, String queue) {
     LOGGER.info("sending message='{}'", message);
-    jmsTemplate.convertAndSend("helloworld.q", message);
+    jmsTemplate.convertAndSend(queue, message);
   }
 }

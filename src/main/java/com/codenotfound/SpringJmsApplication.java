@@ -1,18 +1,16 @@
 package com.codenotfound;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
+import com.codenotfound.jms.Sender;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codenotfound.jms.Sender;
+import java.util.Optional;
 
 @SpringBootApplication
 @RestController
@@ -99,10 +97,16 @@ public class SpringJmsApplication {
 
   @RequestMapping(value = "/available")
   public void available() {
-    sender.send("Hello from controller!");
+    sender.send("Hello from controller!", "helloworld.q");
+  }
+
+  @RequestMapping(value = "/jms/fetch")
+  public void jmsFetch() {
+    sender.send("{\"serverMessage\": {\"requestId\": \"1\",\"action\": \"fetch\",\"data\": {\"id\": \"a8484a52-3436-4d00-956f-ca84b0e22236\"}}}", "server.q");
   }
 
   public static void main(String[] args) {
+    System.setProperty("javax.xml.bind.context.factory","org.eclipse.persistence.jaxb.JAXBContextFactory");
     SpringApplication.run(SpringJmsApplication.class, args);
   }
 }

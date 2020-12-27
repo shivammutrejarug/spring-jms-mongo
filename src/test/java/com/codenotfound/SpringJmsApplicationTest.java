@@ -22,7 +22,7 @@ public class SpringJmsApplicationTest {
 
   @Test
   public void testReceive() throws Exception {
-    sender.send("Hello Spring JMS ActiveMQ!");
+    sender.send("Hello Spring JMS ActiveMQ!", "helloworld.q");
 
     // receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
     // assertThat(receiver.getLatch().getCount()).isEqualTo(0);

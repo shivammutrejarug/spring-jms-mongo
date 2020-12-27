@@ -1,5 +1,7 @@
 package com.codenotfound.jms;
 
+import com.codenotfound.JmsServer;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,16 +27,21 @@ public class ReceiverConfig {
 
   @Bean
   public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
-    DefaultJmsListenerContainerFactory factory =
-        new DefaultJmsListenerContainerFactory();
-    factory
-        .setConnectionFactory(receiverActiveMQConnectionFactory());
-
+    DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+    factory.setConnectionFactory(receiverActiveMQConnectionFactory());
+    factory.setErrorHandler(e -> {
+      System.out.println("Error in listener : " + e);
+    });
     return factory;
   }
 
   @Bean
   public Receiver receiver() {
     return new Receiver();
+  }
+
+  @Bean
+  public JmsServer server() {
+    return new JmsServer();
   }
 }
