@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Optional;
 
 @SpringBootApplication
 @RestController
 public class SpringJmsApplication {
 
+  private static final Logger logger = LogManager.getLogger(SpringJmsApplication.class);
   @Autowired
   private CustomerRepository repository;
 
@@ -102,6 +106,7 @@ public class SpringJmsApplication {
 
   @RequestMapping(value = "/available")
   public void available() {
+    logger.info("Info log");
     sender.send("Hello from controller!", "helloworld.q");
   }
 
