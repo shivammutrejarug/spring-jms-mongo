@@ -106,8 +106,8 @@ public class SpringJmsApplication {
 
   @RequestMapping(value = "/available")
   public void available() {
-    logger.info("Info log");
-    sender.send("Hello from controller!", "helloworld.q");
+    logger.error("Error log");
+    // sender.send("Hello from controller!", "helloworld.q");
   }
 
   @RequestMapping(value = "/jms/fetch/{id}")
@@ -137,7 +137,8 @@ public class SpringJmsApplication {
   @RequestMapping(value = "/jms/incorrect")
   public void jmsIncorrect() {
     String msg = "{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"random\"}}";
-    sender.send(msg, "server.q");
+    logger.error(msg);
+    // sender.send(msg, "server.q");
   }
 
   public static void main(String[] args) {

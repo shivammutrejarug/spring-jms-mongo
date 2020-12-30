@@ -6,30 +6,15 @@
         </Property>
     </Properties>
     <Appenders>
-        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-        </Console>
+        <JMS name="jmsQueue" destinationBindingName="dynamicQueues/helloworld.q" 
+            factoryName="org.apache.activemq.jndi.ActiveMQInitialContextFactory" 
+            factoryBindingName="ConnectionFactory" providerURL="tcp://localhost:61616"> 
+            <JsonLayout properties="true"/>
+        </JMS>
     </Appenders>
     <Loggers>
-        <Logger name="com.example.log4j2demo" level="debug" additivity="false">
-            <AppenderRef ref="ConsoleAppender" />
-        </Logger>
-
-        <Root level="info">
-            <AppenderRef ref="ConsoleAppender" />
+        <Root level="error">
+            <AppenderRef ref="jmsQueue"/>
         </Root>
     </Loggers>
-    <RollingFile
-            name="rollingFile"
-            fileName="logs/application.log"
-            filePattern="logs/application.%i.log.gz"
-            ignoreExceptions="false">
-        <PatternLayout>
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
-        </PatternLayout>
-        <Policies>
-            <SizeBasedTriggeringPolicy size="10MB" />
-        </Policies>
-        <DefaultRolloverStrategy max="5" />
-    </RollingFile>
 </Configuration>
