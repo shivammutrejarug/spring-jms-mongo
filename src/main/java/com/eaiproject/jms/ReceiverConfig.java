@@ -1,6 +1,6 @@
-package com.codenotfound.jms;
+package com.eaiproject.jms;
 
-import com.codenotfound.JmsServer;
+import com.eaiproject.JmsServer;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;

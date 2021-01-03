@@ -1,4 +1,4 @@
-package com.codenotfound.jms;
+package com.eaiproject.jms;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

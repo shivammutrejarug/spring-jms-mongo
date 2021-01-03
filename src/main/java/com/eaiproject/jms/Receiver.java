@@ -1,4 +1,4 @@
-package com.codenotfound.jms;
+package com.eaiproject.jms;
 
 import java.util.concurrent.CountDownLatch;
 import org.slf4j.Logger;

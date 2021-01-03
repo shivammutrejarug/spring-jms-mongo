@@ -1,6 +1,6 @@
-package com.codenotfound;
+package com.eaiproject;
 
-import com.codenotfound.jms.Sender;
+import com.eaiproject.jms.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.jms.annotation.JmsListener;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
-import static com.codenotfound.ServerMessage.unmarshal;
+import static com.eaiproject.ServerMessage.unmarshal;
 
 
 @SpringBootApplication
