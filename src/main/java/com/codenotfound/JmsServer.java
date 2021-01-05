@@ -31,6 +31,8 @@ public class JmsServer {
   }
 
   private ServerResponse handleFetch(String customerId, String requestId){
+    LOGGER.info("[JMSServer.Fetch] Received Request ID: " + requestId + " for Customer ID: " + customerId);
+
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "fetch-response";
@@ -43,12 +45,16 @@ public class JmsServer {
         response.data = customer.toString();
         response.message = "Fetch Successful";
         response.statusCode = 200;
+
+        LOGGER.info("[JMSServer.Fetch] Success : '{}'", response);
       } else {
         System.out.println("Invalid Customer ID : " + customerId);
 
         response.data = "Fetch Failed: Invalid Customer ID";
         response.message = "Bad Request";
         response.statusCode = 400;
+
+        LOGGER.error("[JMSServer.Fetch] Bad Request : '{}'", response);
       }
       return response;
 
@@ -59,11 +65,14 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
+      LOGGER.error("[JMSServer.Fetch] Internal Server Error : '{}'", response);
       return response;
     }
   }
 
   private ServerResponse handleLogin(String customerId, String requestId){
+    LOGGER.info("[JMSServer.Login] Received Request ID: " + requestId + " for Customer ID: " + customerId);
+
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "login-response";
@@ -79,12 +88,16 @@ public class JmsServer {
         response.data = "Access Token: " + customer.get().accessToken;
         response.message = "Login Successful";
         response.statusCode = 200;
+
+        LOGGER.info("[JMSServer.Login] Success : '{}'", response);
       } else {
         System.out.println("Invalid Customer ID : " + customerId);
 
         response.data = "Login Failed: Invalid Customer ID";
         response.message = "Bad Request";
         response.statusCode = 400;
+
+        LOGGER.error("[JMSServer.Login] Bad Request : '{}'", response);
       }
       return response;
 
@@ -95,11 +108,14 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
+      LOGGER.error("[JMSServer.Login] Internal Server Error : '{}'", response);
       return response;
     }
   }
 
   private ServerResponse handleLogout(String customerId, String requestId){
+    LOGGER.info("[JMSServer.Logout] Received Request ID: " + requestId + " for Customer ID: " + customerId);
+
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "login-response";
@@ -115,12 +131,16 @@ public class JmsServer {
         response.data = "Logout Successful";
         response.message = "Logout Successful";
         response.statusCode = 200;
+
+        LOGGER.info("[JMSServer.Logout] Success : '{}'", response);
       } else {
         System.out.println("Invalid Customer ID : " + customerId);
 
         response.data = "Logout Failed: Invalid Customer ID";
         response.message = "Bad Request";
         response.statusCode = 400;
+
+        LOGGER.error("[JMSServer.Logout] Bad Request : '{}'", response);
       }
       return response;
 
@@ -131,11 +151,14 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
+      LOGGER.error("[JMSServer.Logout] Internal Server Error : '{}'", response);
       return response;
     }
   }
 
   private ServerResponse handleAuthenticate(String customerId, String accessToken, String requestId){
+    LOGGER.info("[JMSServer.Authenticate] Received Request ID: " + requestId + " for Customer ID: " + customerId + "and Access Token: " + accessToken);
+
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "authenticate-response";
@@ -152,10 +175,14 @@ public class JmsServer {
           response.data = "Valid Customer";
           response.message = "Authentication Successful";
           response.statusCode = 200;
+
+          LOGGER.info("[JMSServer.Authenticate] Success : '{}'", response);
         } else {
           response.data = "Unauthorised Customer";
           response.message = "Authentication Failed";
           response.statusCode = 401;
+
+          LOGGER.error("[JMSServer.Authenticate] Authentication Failed : '{}'", response);
         }
 
       } else {
@@ -164,6 +191,8 @@ public class JmsServer {
         response.data = "Authentication Failed: Invalid Customer ID";
         response.message = "Bad Request";
         response.statusCode = 400;
+
+        LOGGER.error("[JMSServer.Authenticate] Bad Request : '{}'", response);
       }
       return response;
 
@@ -174,6 +203,7 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
+      LOGGER.error("[JMSServer.Authenticate] Internal Server Error : '{}'", response);
       return response;
     }
   }
@@ -186,6 +216,7 @@ public class JmsServer {
     response.message = "Action not defined";
     response.statusCode = 404;
 
+    LOGGER.error("[JMSServer.Default] Invalid Action = '{}'", msg);
     return response;
   }
 
