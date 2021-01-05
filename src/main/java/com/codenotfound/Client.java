@@ -33,6 +33,13 @@ public class Client {
         }
     }
 
+    public void triggerInternalServerErrorRequests() {
+        for (int i = 0; i < REQUESTS_AT_TIME; i++) {
+            String msg = String.format("{\"requestMessage\": {\"requestId\": \"%d\",\"action\": \"internal_server_error\"}}", i);
+            sender.send(msg, "server.q");
+        }
+    }
+
     @JmsListener(destination = "client.q")
     public void receive(String message) {
         LOGGER.info("received message='{}'", message);

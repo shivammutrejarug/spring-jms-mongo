@@ -157,6 +157,12 @@ public class SpringJmsApplication {
     client.triggerInvalidActionRequests();
   }
 
+  @RequestMapping(value = "/jms/client/internalservererror")
+  public void jmsClientInternalServerError() {
+    System.out.println("[JMSClient.InvalidActionRequests] Sending internal server error requests");
+    client.triggerInternalServerErrorRequests();
+  }
+
   public static void main(String[] args) {
     System.setProperty("javax.xml.bind.context.factory","org.eclipse.persistence.jaxb.JAXBContextFactory");
     SpringApplication.run(SpringJmsApplication.class, args);
