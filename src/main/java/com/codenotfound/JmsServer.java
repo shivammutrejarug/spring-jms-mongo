@@ -1,6 +1,7 @@
 package com.codenotfound;
 
 import com.codenotfound.jms.Sender;
+import com.google.common.base.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
 import static com.codenotfound.ServerMessage.unmarshal;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 
 @SpringBootApplication
@@ -31,24 +33,36 @@ public class JmsServer {
   }
 
   private ServerResponse handleFetch(String customerId, String requestId){
+    LOGGER.info("[JMSServer.Fetch] Received Request ID: " + requestId + " for Customer ID: " + customerId);
+
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "fetch-response";
 
     try {
+      Stopwatch timer = Stopwatch.createStarted();
+
       Optional<Customer> customer = repository.findById(customerId);
+
+      timer.stop();
+      LOGGER.info("[DB.FindByID] Duration : " + timer.elapsed(MILLISECONDS));
+
       if (customer.isPresent()) {
         System.out.println("Fetched customer : " + customer.get());
 
         response.data = customer.toString();
         response.message = "Fetch Successful";
         response.statusCode = 200;
+
+        LOGGER.info("[JMSServer.Fetch] Success : '{}'", response);
       } else {
         System.out.println("Invalid Customer ID : " + customerId);
 
         response.data = "Fetch Failed: Invalid Customer ID";
         response.message = "Bad Request";
         response.statusCode = 400;
+
+        LOGGER.error("[JMSServer.Fetch] Bad Request : '{}'", response);
       }
       return response;
 
@@ -59,32 +73,50 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
+      LOGGER.error("[JMSServer.Fetch] Internal Server Error : '{}'", response);
       return response;
     }
   }
 
   private ServerResponse handleLogin(String customerId, String requestId){
+    LOGGER.info("[JMSServer.Login] Received Request ID: " + requestId + " for Customer ID: " + customerId);
+
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "login-response";
 
     try {
+      Stopwatch fetchtimer = Stopwatch.createStarted();
+
       Optional<Customer> customer = repository.findById(customerId);
+
+      fetchtimer.stop();
+      LOGGER.info("[DB.FindByID] Duration : " + fetchtimer.elapsed(MILLISECONDS));
+
       if (customer.isPresent()) {
         customer.get().Login();
+        Stopwatch saveTimer = Stopwatch.createStarted();
+
         repository.save(customer.get());
+
+        saveTimer.stop();
+        LOGGER.info("[DB.Save] Duration : " + fetchtimer.elapsed(MILLISECONDS));
 
         System.out.println("Logged in customer : " + customer.get());
 
         response.data = "Access Token: " + customer.get().accessToken;
         response.message = "Login Successful";
         response.statusCode = 200;
+
+        LOGGER.info("[JMSServer.Login] Success : '{}'", response);
       } else {
         System.out.println("Invalid Customer ID : " + customerId);
 
         response.data = "Login Failed: Invalid Customer ID";
         response.message = "Bad Request";
         response.statusCode = 400;
+
+        LOGGER.error("[JMSServer.Login] Bad Request : '{}'", response);
       }
       return response;
 
@@ -95,32 +127,51 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
+      LOGGER.error("[JMSServer.Login] Internal Server Error : '{}'", response);
       return response;
     }
   }
 
   private ServerResponse handleLogout(String customerId, String requestId){
+    LOGGER.info("[JMSServer.Logout] Received Request ID: " + requestId + " for Customer ID: " + customerId);
+
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "login-response";
 
     try {
+      Stopwatch fetchTimer = Stopwatch.createStarted();
+
       Optional<Customer> customer = repository.findById(customerId);
+
+      fetchTimer.stop();
+      LOGGER.info("[DB.FindById] Duration : " + fetchTimer.elapsed(MILLISECONDS));
+
       if (customer.isPresent()) {
         customer.get().Logout();
+
+        Stopwatch saveTimer = Stopwatch.createStarted();
+
         repository.save(customer.get());
+
+        saveTimer.stop();
+        LOGGER.info("[DB.Save] Duration : " + saveTimer.elapsed(MILLISECONDS));
 
         System.out.println("Logged out customer : " + customer.get());
 
         response.data = "Logout Successful";
         response.message = "Logout Successful";
         response.statusCode = 200;
+
+        LOGGER.info("[JMSServer.Logout] Success : '{}'", response);
       } else {
         System.out.println("Invalid Customer ID : " + customerId);
 
         response.data = "Logout Failed: Invalid Customer ID";
         response.message = "Bad Request";
         response.statusCode = 400;
+
+        LOGGER.error("[JMSServer.Logout] Bad Request : '{}'", response);
       }
       return response;
 
@@ -131,17 +182,25 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
+      LOGGER.error("[JMSServer.Logout] Internal Server Error : '{}'", response);
       return response;
     }
   }
 
   private ServerResponse handleAuthenticate(String customerId, String accessToken, String requestId){
+    LOGGER.info("[JMSServer.Authenticate] Received Request ID: " + requestId + " for Customer ID: " + customerId + "and Access Token: " + accessToken);
+
     ServerResponse response = new ServerResponse();
     response.requestId = requestId;
     response.action = "authenticate-response";
 
     try {
+      Stopwatch fetchTimer = Stopwatch.createStarted();
+
       Optional<Customer> customer = repository.findById(customerId);
+
+      fetchTimer.stop();
+      LOGGER.info("[DB.FindById] Duration : " + fetchTimer.elapsed(MILLISECONDS));
 
       if (customer.isPresent()) {
         Boolean result = customer.get().IsAuthenticated(accessToken);
@@ -152,10 +211,14 @@ public class JmsServer {
           response.data = "Valid Customer";
           response.message = "Authentication Successful";
           response.statusCode = 200;
+
+          LOGGER.info("[JMSServer.Authenticate] Success : '{}'", response);
         } else {
           response.data = "Unauthorised Customer";
           response.message = "Authentication Failed";
           response.statusCode = 401;
+
+          LOGGER.error("[JMSServer.Authenticate] Authentication Failed : '{}'", response);
         }
 
       } else {
@@ -164,6 +227,8 @@ public class JmsServer {
         response.data = "Authentication Failed: Invalid Customer ID";
         response.message = "Bad Request";
         response.statusCode = 400;
+
+        LOGGER.error("[JMSServer.Authenticate] Bad Request : '{}'", response);
       }
       return response;
 
@@ -174,13 +239,26 @@ public class JmsServer {
       response.message = "Internal Server Error";
       response.statusCode = 500;
 
+      LOGGER.error("[JMSServer.Authenticate] Internal Server Error : '{}'", response);
       return response;
     }
   }
 
+  private ServerResponse handleDefault(ServerMessage msg) {
+    ServerResponse response = new ServerResponse();
+    response.requestId = msg.requestId;
+    response.action = msg.action;
+    response.data = "Invalid Action";
+    response.message = "Action not defined";
+    response.statusCode = 404;
+
+    LOGGER.error("[JMSServer.Default] Invalid Action = '{}'", msg);
+    return response;
+  }
+
   @JmsListener(destination = "server.q")
   public void receive(String message) {
-    LOGGER.info("received message on server = '{}'", message);
+    LOGGER.info("received message on jms server queue = '{}'", message);
     latch.countDown();
 
     ServerResponse response = null;
@@ -199,12 +277,7 @@ public class JmsServer {
         response = handleAuthenticate(msg.customerId, msg.accessToken, msg.requestId);
         break;
       default:
-        response = new ServerResponse();
-        response.requestId = msg.requestId;
-        response.action = msg.action;
-        response.data = "Invalid Action";
-        response.message = "Action not defined";
-        response.statusCode = 404;
+        response = handleDefault(msg);
     }
 
     sender.send(response.marshal(), "client.q");
