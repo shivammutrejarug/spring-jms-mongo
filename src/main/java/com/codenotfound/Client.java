@@ -40,6 +40,27 @@ public class Client {
         }
     }
 
+    public void triggerBadRequestsFetch() {
+        for (int i = 0; i < REQUESTS_AT_TIME; i++) {
+            String msg = String.format("{\"requestMessage\": {\"requestId\": \"%d\",\"action\": \"fetch\",\"customerId\": \"%d\"}}", i, i);
+            sender.send(msg, "server.q");
+        }
+    }
+
+    public void triggerBadRequestsLogin() {
+        for (int i = 0; i < REQUESTS_AT_TIME; i++) {
+            String msg = String.format("{\"requestMessage\": {\"requestId\": \"%d\",\"action\": \"login\",\"customerId\": \"%d\"}}", i, i);
+            sender.send(msg, "server.q");
+        }
+    }
+
+    public void triggerBadRequestsLogout() {
+        for (int i = 0; i < REQUESTS_AT_TIME; i++) {
+            String msg = String.format("{\"requestMessage\": {\"requestId\": \"%d\",\"action\": \"logout\",\"customerId\": \"%d\"}}", i, i);
+            sender.send(msg, "server.q");
+        }
+    }
+
     @JmsListener(destination = "client.q")
     public void receive(String message) {
         LOGGER.info("received message='{}'", message);
