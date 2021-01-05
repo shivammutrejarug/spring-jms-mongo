@@ -1,6 +1,7 @@
 package com.codenotfound;
 
 import com.codenotfound.jms.Sender;
+import com.google.common.base.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
 import static com.codenotfound.ServerMessage.unmarshal;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 
 @SpringBootApplication
@@ -38,7 +40,13 @@ public class JmsServer {
     response.action = "fetch-response";
 
     try {
+      Stopwatch timer = Stopwatch.createStarted();
+
       Optional<Customer> customer = repository.findById(customerId);
+
+      timer.stop();
+      LOGGER.info("[DB.FindByID] Duration : " + timer.elapsed(MILLISECONDS));
+
       if (customer.isPresent()) {
         System.out.println("Fetched customer : " + customer.get());
 
@@ -78,10 +86,21 @@ public class JmsServer {
     response.action = "login-response";
 
     try {
+      Stopwatch fetchtimer = Stopwatch.createStarted();
+
       Optional<Customer> customer = repository.findById(customerId);
+
+      fetchtimer.stop();
+      LOGGER.info("[DB.FindByID] Duration : " + fetchtimer.elapsed(MILLISECONDS));
+
       if (customer.isPresent()) {
         customer.get().Login();
+        Stopwatch saveTimer = Stopwatch.createStarted();
+
         repository.save(customer.get());
+
+        saveTimer.stop();
+        LOGGER.info("[DB.Save] Duration : " + fetchtimer.elapsed(MILLISECONDS));
 
         System.out.println("Logged in customer : " + customer.get());
 
@@ -121,10 +140,22 @@ public class JmsServer {
     response.action = "login-response";
 
     try {
+      Stopwatch fetchTimer = Stopwatch.createStarted();
+
       Optional<Customer> customer = repository.findById(customerId);
+
+      fetchTimer.stop();
+      LOGGER.info("[DB.FindById] Duration : " + fetchTimer.elapsed(MILLISECONDS));
+
       if (customer.isPresent()) {
         customer.get().Logout();
+
+        Stopwatch saveTimer = Stopwatch.createStarted();
+
         repository.save(customer.get());
+
+        saveTimer.stop();
+        LOGGER.info("[DB.Save] Duration : " + saveTimer.elapsed(MILLISECONDS));
 
         System.out.println("Logged out customer : " + customer.get());
 
@@ -164,7 +195,12 @@ public class JmsServer {
     response.action = "authenticate-response";
 
     try {
+      Stopwatch fetchTimer = Stopwatch.createStarted();
+
       Optional<Customer> customer = repository.findById(customerId);
+
+      fetchTimer.stop();
+      LOGGER.info("[DB.FindById] Duration : " + fetchTimer.elapsed(MILLISECONDS));
 
       if (customer.isPresent()) {
         Boolean result = customer.get().IsAuthenticated(accessToken);
