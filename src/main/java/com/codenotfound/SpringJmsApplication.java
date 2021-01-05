@@ -144,6 +144,13 @@ public class SpringJmsApplication {
     sender.send(msg, "server.q");
   }
 
+  @RequestMapping(value = "/jms/internalservererror")
+  public void jmsInternalServerError() {
+    String msg = "{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"internal_server_error\"}}";
+    logger.error(msg);
+    sender.send(msg, "server.q");
+  }
+
   @RequestMapping(value = "/jms/client/incorrect")
   public void jmsClientIncorrect() {
     System.out.println("[JMSClient.InvalidActionRequests] Sending invalid requests");
