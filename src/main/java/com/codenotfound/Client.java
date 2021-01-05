@@ -15,6 +15,8 @@ public class Client {
     @Autowired
     private Sender sender;
 
+    private static final Integer REQUESTS_AT_TIME = 1000;
+
     private static final Logger LOGGER =
             LoggerFactory.getLogger(JmsServer.class);
 
@@ -22,6 +24,13 @@ public class Client {
 
     public CountDownLatch getLatch() {
         return latch;
+    }
+
+    public void triggerInvalidActionRequests() {
+        for (int i = 0; i < REQUESTS_AT_TIME; i++) {
+            String msg = String.format("{\"requestMessage\": {\"requestId\": \"%d\",\"action\": \"random\"}}", i);
+            sender.send(msg, "server.q");
+        }
     }
 
     @JmsListener(destination = "client.q")

@@ -26,6 +26,9 @@ public class SpringJmsApplication {
   @Autowired
   private Sender sender;
 
+  @Autowired
+  private Client client;
+
   @RequestMapping(value = "/save")
   public void save() {
     repository.deleteAll();
@@ -138,7 +141,13 @@ public class SpringJmsApplication {
   public void jmsIncorrect() {
     String msg = "{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"random\"}}";
     logger.error(msg);
-    // sender.send(msg, "server.q");
+    sender.send(msg, "server.q");
+  }
+
+  @RequestMapping(value = "/jms/client/incorrect")
+  public void jmsClientIncorrect() {
+    System.out.println("[JMSClient.InvalidActionRequests] Sending invalid requests");
+    client.triggerInvalidActionRequests();
   }
 
   public static void main(String[] args) {
