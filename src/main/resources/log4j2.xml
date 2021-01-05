@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex
+        </Property>
+    </Properties>
+    <Appenders>
+        <JMS name="jmsQueue" destinationBindingName="dynamicQueues/helloworld.q" 
+            factoryName="org.apache.activemq.jndi.ActiveMQInitialContextFactory" 
+            factoryBindingName="ConnectionFactory" providerURL="tcp://localhost:61616"> 
+            <JsonLayout properties="true"/>
+        </JMS>
+    </Appenders>
+    <Loggers>
+        <Root level="error">
+            <AppenderRef ref="jmsQueue"/>
+        </Root>
+    </Loggers>
+</Configuration>
