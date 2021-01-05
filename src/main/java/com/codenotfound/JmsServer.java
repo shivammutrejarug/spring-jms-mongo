@@ -178,9 +178,20 @@ public class JmsServer {
     }
   }
 
+  private ServerResponse handleDefault(ServerMessage msg) {
+    ServerResponse response = new ServerResponse();
+    response.requestId = msg.requestId;
+    response.action = msg.action;
+    response.data = "Invalid Action";
+    response.message = "Action not defined";
+    response.statusCode = 404;
+
+    return response;
+  }
+
   @JmsListener(destination = "server.q")
   public void receive(String message) {
-    LOGGER.info("received message on server = '{}'", message);
+    LOGGER.info("received message on jms server queue = '{}'", message);
     latch.countDown();
 
     ServerResponse response = null;
@@ -199,12 +210,7 @@ public class JmsServer {
         response = handleAuthenticate(msg.customerId, msg.accessToken, msg.requestId);
         break;
       default:
-        response = new ServerResponse();
-        response.requestId = msg.requestId;
-        response.action = msg.action;
-        response.data = "Invalid Action";
-        response.message = "Action not defined";
-        response.statusCode = 404;
+        response = handleDefault(msg);
     }
 
     sender.send(response.marshal(), "client.q");

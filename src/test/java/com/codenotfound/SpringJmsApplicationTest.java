@@ -1,24 +1,32 @@
 package com.codenotfound;
 
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class SpringJmsApplicationTest {
-
-//  @Autowired
-//  private Sender sender;
+//import com.codenotfound.jms.Receiver;
+//import com.codenotfound.jms.Sender;
+//import org.junit.Test;
+//import org.junit.runner.RunWith;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.test.context.junit4.SpringRunner;
 //
-//  @Autowired
-//  private Receiver receiver;
+//import java.util.concurrent.TimeUnit;
 //
-//  @Test
-//  public void testReceive() throws Exception {
-//    sender.send("Hello Spring JMS ActiveMQ!", "helloworld.q");
-
-    // receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
-    // assertThat(receiver.getLatch().getCount()).isEqualTo(0);
-//  }
-}
+//import static org.junit.Assert.assertThat;
+//
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+//public class SpringJmsApplicationTest {
+//
+//    @Autowired
+//    private Sender sender;
+//
+//    @Autowired
+//    private Receiver receiver;
+//
+//    @Test
+//    public void testReceive() throws Exception {
+//         sender.send("Hello Spring JMS ActiveMQ!", "helloworld.q");
+//
+//         receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+//         assertThat(receiver.getLatch().getCount(), 0).isEqualTo(0);
+//    }
+//}
