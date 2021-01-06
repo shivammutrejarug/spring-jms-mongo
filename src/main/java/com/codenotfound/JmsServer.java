@@ -256,6 +256,18 @@ public class JmsServer {
     return response;
   }
 
+  private ServerResponse handleInternalServerError(ServerMessage msg) {
+    ServerResponse response = new ServerResponse();
+    response.requestId = msg.requestId;
+    response.action = msg.action;
+    response.data = "Simulated Internal Server Error";
+    response.message = "Internal Server Error";
+    response.statusCode = 500;
+
+    LOGGER.error("[JMSServer.Default] Invalid Action = '{}'", msg);
+    return response;
+  }
+
   @JmsListener(destination = "server.q")
   public void receive(String message) {
     LOGGER.info("received message on jms server queue = '{}'", message);
@@ -276,6 +288,8 @@ public class JmsServer {
       case "authenticate":
         response = handleAuthenticate(msg.customerId, msg.accessToken, msg.requestId);
         break;
+      case "internal-server-error":
+        response = handleInternalServerError(msg);
       default:
         response = handleDefault(msg);
     }

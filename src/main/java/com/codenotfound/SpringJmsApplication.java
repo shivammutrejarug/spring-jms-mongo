@@ -26,6 +26,9 @@ public class SpringJmsApplication {
   @Autowired
   private Sender sender;
 
+  @Autowired
+  private Client client;
+
   @RequestMapping(value = "/save")
   public void save() {
     repository.deleteAll();
@@ -138,7 +141,44 @@ public class SpringJmsApplication {
   public void jmsIncorrect() {
     String msg = "{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"random\"}}";
     logger.error(msg);
-    // sender.send(msg, "server.q");
+    sender.send(msg, "server.q");
+  }
+
+  @RequestMapping(value = "/jms/internalservererror")
+  public void jmsInternalServerError() {
+    String msg = "{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"internal_server_error\"}}";
+    logger.error(msg);
+    sender.send(msg, "server.q");
+  }
+
+  @RequestMapping(value = "/jms/client/incorrect")
+  public void jmsClientIncorrect() {
+    System.out.println("[JMSClient.InvalidActionRequests] Sending invalid requests");
+    client.triggerInvalidActionRequests();
+  }
+
+  @RequestMapping(value = "/jms/client/internalservererror")
+  public void jmsClientInternalServerError() {
+    System.out.println("[JMSClient.InternalServerErrorRequests] Sending internal server error requests");
+    client.triggerInternalServerErrorRequests();
+  }
+
+  @RequestMapping(value = "/jms/client/fetch/badrequests")
+  public void jmsClientFetchBadRequests() {
+    System.out.println("[JMSClient.FetchBadRequests] Sending bad requests for fetch API");
+    client.triggerBadRequestsFetch();
+  }
+
+  @RequestMapping(value = "/jms/client/login/badrequests")
+  public void jmsClientLoginBadRequests() {
+    System.out.println("[JMSClient.LoginBadRequests] Sending bad requests for login API");
+    client.triggerBadRequestsLogin();
+  }
+
+  @RequestMapping(value = "/jms/client/logout/badrequests")
+  public void jmsClientLogoutBadRequests() {
+    System.out.println("[JMSClient.LogoutBadRequests] Sending bad requests for logout API");
+    client.triggerBadRequestsLogout();
   }
 
   public static void main(String[] args) {

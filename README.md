@@ -22,4 +22,6 @@ Now, visit you kibana discover tab, you should see the message there as well. Th
 
 Now, visit, `localhost:8090/save`, this should save a few entries in mongodb. Access mongoshell to check if it was store. DB name would be `test` and collection name `customer`.
 
+Visit localhost:8090/client to access the client page.
+
 We now need to play around with this and create a crud app inside this project.

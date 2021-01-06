@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+      @media (max-width: 1200px) {
+          .container {
+              max-width: 100% !important;
+          }
+      }
+
+      .table-wrapper {
+          width: 100%;
+          overflow-y: hidden;
+      }
+
+      .custom-table tr td, .custom-table tr th {
+          vertical-align: middle;
+      }
+
+      .custom-table tr td:last-child {
+          width:1%;
+          white-space:nowrap;
+          text-align:right;
+      }
+
+      .custom-table tr td:last-child > * {
+          display: inline-block;
+          margin-left: 5px;
+      }
+
+      .custom-table tr td:last-child > *:first-child {
+          margin-left: 0px;
+      }
+
+      .page-header-spacing {
+          margin-top:100px;
+          margin-bottom: 50px;
+      }
+
+      .error-message {
+          position: fixed;
+          left: 50%;
+          transform: translateX(-50%);
+          margin-top: 15px;
+          display: none;
+      }
+    </style>
+
+    <title>JMS Client Demo</title>
+</head>
+<body>
+
+<div id="errorMessage" class="container error-message">
+    <div class="alert alert-danger" role="alert">
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="page-header page-header-spacing text-center">
+                <h1>JMS Client Demo</h1>
+                <p>This page acts as a client demo for the JMS application</p>
+            </div>
+
+            <form>
+              <div class="form-group">
+                <label for="endpointSelect">Select endpoints</label>
+                <select multiple size="5" class="form-control" id="endpointSelect">
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="requestAmount">Amount of requests</label>
+                <input type="number" value="1000" class="form-control" id="requestAmount">
+              </div>
+
+              <div class="form-group">
+                <label for="requestSendRate">Request send rate</label>
+                <input type="number" value="60" class="form-control" id="requestSendRate">
+              </div>
+
+              <div class="form-group">
+                <button type="button" onclick="floodEndpoints();" class="btn btn-primary mb-3 float-right">Flood endpoints</button>
+              </div>
+
+              <div class="form-group">
+                <label for="logTextarea">Log</label>
+                <textarea class="form-control" id="logTextarea" rows="10"></textarea>
+              </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script>
+
+    window.onload = function ()
+    {
+        endpoints = [];
+        endpoints.push(window.location.origin + "/fetch");
+        endpoints.push(window.location.origin + "/login");
+        endpoints.push(window.location.origin + "/logout");
+        endpoints.push(window.location.origin + "/authenticate");
+        endpoints.push(window.location.origin + "/available");
+
+        endpoints.forEach(function(endpoint) {
+            var option = document.createElement("option");
+            option.value = endpoint;
+            option.text = endpoint;
+            endpointSelect.add(option.cloneNode(true));
+        });
+    }
+
+    function floodEndpoints()
+    {
+        var amount = requestAmount.value;
+        var rate = requestSendRate.value;
+        var endpoints = Array.from(endpointSelect.options).filter(option => option.selected).map(option => option.value);
+        var requests = [];
+
+        logTextarea.append("Starting..\n");
+        logTextarea.append("Generating " + amount + " random http requests\n");
+
+        for (i = 0; i < amount; i++) {
+            requests.push({url : endpoints[i % endpoints.length]});
+        }
+
+        console.log(requests);
+
+        var counter = 0;
+        var i = setInterval(function() {
+            logTextarea.append("Sending " + counter + " of " + amount + " http requests\n");
+            logTextarea.scrollTop = logTextarea.scrollHeight;
+            doRequest(requests[counter]);
+            counter++;
+            if(counter === requests.length) {
+                clearInterval(i);
+            }
+        }, 1000 / rate);
+    }
+
+    async function doRequest(request)
+    {
+          try
+          {       
+              result = await sendRequest(request);
+              console.log(result);
+          }
+          catch (e)
+          {
+              console.log(e);
+          }
+    }
+
+    async function sendRequest(request)
+    {
+        var response = await fetch(request.url);
+        return await response.json();
+    }
+
+</script>
+
+</body>
+</html>
+
+

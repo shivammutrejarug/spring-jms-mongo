@@ -1,5 +1,6 @@
 package com.codenotfound.jms;
 
+import com.codenotfound.Client;
 import com.codenotfound.JmsServer;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -43,5 +44,10 @@ public class ReceiverConfig {
   @Bean
   public JmsServer server() {
     return new JmsServer();
+  }
+
+  @Bean
+  public Client client() {
+    return new Client();
   }
 }
