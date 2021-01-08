@@ -1,4 +1,4 @@
-package com.codenotfound;
+package com.eaiproject;
 
 import java.util.List;
 

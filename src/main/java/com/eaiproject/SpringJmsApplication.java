@@ -1,6 +1,6 @@
-package com.codenotfound;
+package com.eaiproject;
 
-import com.codenotfound.jms.Sender;
+import com.eaiproject.jms.Sender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -146,7 +146,7 @@ public class SpringJmsApplication {
 
   @RequestMapping(value = "/jms/internalservererror")
   public void jmsInternalServerError() {
-    String msg = "{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"internal_server_error\"}}";
+    String msg = "{\"requestMessage\": {\"requestId\": \"1\",\"action\": \"internal-server-error\"}}";
     logger.error(msg);
     sender.send(msg, "server.q");
   }

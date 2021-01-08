@@ -1,4 +1,4 @@
-package com.codenotfound.controllers;
+package com.eaiproject.controllers;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;

@@ -1,4 +1,4 @@
-package com.codenotfound;
+package com.eaiproject;
 
 import org.eclipse.persistence.jaxb.MarshallerProperties;
 

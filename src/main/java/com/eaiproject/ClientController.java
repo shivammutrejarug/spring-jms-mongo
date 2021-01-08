@@ -1,4 +1,4 @@
-package com.codenotfound;
+package com.eaiproject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -4,13 +4,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.codenotfound</groupId>
+  <groupId>com.eaiproject</groupId>
   <artifactId>spring-jms-activemq-hello-world</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <name>spring-jms-activemq-hello-world</name>
   <description>Spring JMS ActiveMQ Example</description>
-  <url>https://codenotfound.com/spring-jms-activemq-example.html</url>
+  <url>https://eaiproject.com/spring-jms-activemq-example.html</url>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -21,6 +21,7 @@
 
   <properties>
     <java.version>8</java.version>
+      <start-class>com.eaiproject.SpringJmsApplication</start-class>
   </properties>
 
   <dependencies>

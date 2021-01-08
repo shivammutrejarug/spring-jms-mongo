@@ -1,7 +1,7 @@
-package com.codenotfound;
+package com.eaiproject;
 
-//import com.codenotfound.jms.Receiver;
-//import com.codenotfound.jms.Sender;
+//import com.eaiproject.jms.Receiver;
+//import com.eaiproject.jms.Sender;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
 //import org.springframework.beans.factory.annotation.Autowired;

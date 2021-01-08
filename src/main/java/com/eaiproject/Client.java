@@ -1,6 +1,6 @@
-package com.codenotfound;
+package com.eaiproject;
 
-import com.codenotfound.jms.Sender;
+import com.eaiproject.jms.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class Client {
 
     public void triggerInternalServerErrorRequests() {
         for (int i = 0; i < REQUESTS_AT_TIME; i++) {
-            String msg = String.format("{\"requestMessage\": {\"requestId\": \"%d\",\"action\": \"internal_server_error\"}}", i);
+            String msg = String.format("{\"requestMessage\": {\"requestId\": \"%d\",\"action\": \"internal-server-error\"}}", i);
             sender.send(msg, "server.q");
         }
     }
